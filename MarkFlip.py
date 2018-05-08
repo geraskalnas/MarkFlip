@@ -21,6 +21,7 @@ strongRegex = re.compile(r'\*{2}.+\*{2}')
 emphasisRegex = re.compile(r'[^\*\\]\*[^/]+[^\\]\*[^\*]')
 strikeRegex = re.compile(r'~{2}.+~{2}')
 linkRegex = re.compile(r'[^!]\[([^\[]+)\]( )*\(([^\)]+)\)')
+imageRegex = re.compile(r'!\[([^\[]+)\]( )*\(([^\)]+)\)')
 codeInlineRegex = re.compile(r'([^\\]`)([^`\\\n]+)`')
 codeFenceRegex = re.compile(r'```([^\n]+)\n([^\\]+)```')
 escapeRegex = re.compile(r'\\([\*|\\|\`])')
@@ -43,6 +44,9 @@ with codecs.open(mdFileUrl,'r','utf-8') as f:
     for display, space, link in linkRegex.findall(raw):
         originalText = '[{}]{}({})'.format(display,space,link)
         raw = raw.replace(originalText, '<a href=\'{}\'>{}</a>'.format(link.strip(), display.strip()))
+    for display, space, link in imageRegex.findall(raw):
+        originalText = '[{}]{}({})'.format(display,space,link)
+        raw = raw.replace(originalText, '<img src=\'{}\' alt=\'{}\'>'.format(link.strip(), display.strip()))
     for before, code in codeInlineRegex.findall(raw):
         originalText = before[1:] + code + '`'
         raw = raw.replace(originalText, '<code>{}</code>'.format(code.strip()))
