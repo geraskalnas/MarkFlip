@@ -20,6 +20,7 @@ headerRegex = re.compile(r'(#{1,6} *)(.*)')
 header2Regex = re.compile(r'([\w ]+\n)*([\w ]+)\n([=-]+)')
 strongRegex = re.compile(r'\*{2}.+\*{2}')
 emphasisRegex = re.compile(r'[^\*\\]\*[^/]+[^\\]\*[^\*]')
+unorderedListRegex = re.compile(r'( {0,3})(\*)([\w \-\[\]\(\):/\.]+\n?)+')
 strikeRegex = re.compile(r'~{2}.+~{2}')
 linkRegex = re.compile(r'[^!]\[([^\[]+)\]( )*\(([^\)]+)\)')
 imageRegex = re.compile('!\\[([^\\[]+)\\]( )*\\(([^"\'\\)]+[^\\.\'"]+)[\'"\\ ]*([\\w\\s]+)[\'"\\ ]*\\)')
@@ -37,11 +38,9 @@ with codecs.open(mdFileUrl,'r','utf-8') as f:
         originalText = level+text
         level = level.count('#')
         raw = raw.replace(originalText, '<h{}>{}</h{}>'.format(level,text,level))
-    print(header2Regex.findall(raw))
-    for text, level in header2Regex.findall(raw):
-        originalText = text+level
-        if(level.count('=')):
-          level = 1
+    for lastl, text, level in header2Regex.findall(raw):
+        originalText = lastl+text+"\n"+level
+        if(level.count('=')): level = 1
         else: level = 2
         raw = raw.replace(originalText, '<h{}>{}</h{}>'.format(level,text,level))
     for match in strongRegex.findall(raw):
@@ -50,6 +49,17 @@ with codecs.open(mdFileUrl,'r','utf-8') as f:
         raw = raw.replace(match[1:-1], '<em>{}</em>'.format(match[2:-2]))
     for match in strikeRegex.findall(raw):
         raw = raw.replace(match, '<del>{}</del>'.format(match[2:-2]))
+    for spaces, star, text in unorderedListRegex.findall(raw):
+        #if(type(text)=="<class 'str'>"):
+        if(True):
+          print(0)
+          text=[text]
+        tex=''
+        for i in text:
+          tex=tex+"<li>"+i+"</li>"
+        originalText = spaces+star+tex
+        print(originalText)
+        raw = raw.replace(originalText, '<ul>{}</ul>'.format(tex))
     for display, space, link in linkRegex.findall(raw):
         originalText = '[{}]{}({})'.format(display,space,link)
         raw = raw.replace(originalText, '<a href=\'{}\'>{}</a>'.format(link.strip(), display.strip()))
