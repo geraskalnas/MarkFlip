@@ -17,6 +17,7 @@ htmlEnd = '''</body>
 '''
 
 headerRegex = re.compile(r'(#{1,6} *)(.*)')
+header2Regex = re.compile(r'([\w ]+)(\n============)|([\w ]+)(\n\-\-\-\-\-\-\-\-\-\-\-\-)')
 strongRegex = re.compile(r'\*{2}.+\*{2}')
 emphasisRegex = re.compile(r'[^\*\\]\*[^/]+[^\\]\*[^\*]')
 strikeRegex = re.compile(r'~{2}.+~{2}')
@@ -26,6 +27,7 @@ codeInlineRegex = re.compile(r'([^\\]`)([^`\\\n]+)`')
 codeFenceRegex = re.compile(r'```([^\n]+)\n([^\\]+)```')
 escapeRegex = re.compile(r'\\([\*|\\|\`])')
 lineBreakRegex = re.compile(r'[\n]{2,}')
+#sthRegex = re.compile(r'[=\-]+')
 
 with codecs.open(mdFileUrl,'r','utf-8') as f:
     print('Opening file...')
@@ -34,6 +36,13 @@ with codecs.open(mdFileUrl,'r','utf-8') as f:
     for level, text in headerRegex.findall(raw):
         originalText = level+text
         level = level.count('#')
+        raw = raw.replace(originalText, '<h{}>{}</h{}>'.format(level,text,level))
+    print(header2Regex.findall(raw))
+    for text, level in header2Regex.findall(raw):
+        originalText = text+level
+        if(level.count('=')):
+          level = 1
+        else: level = 2
         raw = raw.replace(originalText, '<h{}>{}</h{}>'.format(level,text,level))
     for match in strongRegex.findall(raw):
         raw = raw.replace(match, '<strong>{}</strong>'.format(match[2:-2]))
@@ -58,6 +67,8 @@ with codecs.open(mdFileUrl,'r','utf-8') as f:
         raw = raw.replace('\\{}'.format(match), match)
     for match in lineBreakRegex.findall(raw):
         raw = raw.replace(match, '<br />')
+    #for match in sthRegex.findall(raw):
+    #    raw = raw.replace(match, '')
     raw = raw.replace('\n','')
 
 with codecs.open('MarkFlip.html','w','utf-8') as f:
