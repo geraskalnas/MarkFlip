@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 import codecs
 import re
 
@@ -51,13 +53,13 @@ with codecs.open(mdFileUrl,'r','utf-8') as f:
         raw = raw.replace(match, '<del>{}</del>'.format(match[2:-2]))
     for spaces, star, text in unorderedListRegex.findall(raw):
         #if(type(text)=="<class 'str'>"):
+        originalText = spaces+star+text
         if(True):
           print(0)
           text=[text]
         tex=''
         for i in text:
           tex=tex+"<li>"+i+"</li>"
-        originalText = spaces+star+tex
         print(originalText)
         raw = raw.replace(originalText, '<ul>{}</ul>'.format(tex))
     for display, space, link in linkRegex.findall(raw):
