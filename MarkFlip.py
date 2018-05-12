@@ -22,7 +22,7 @@ headerRegex = re.compile(r'(#{1,6} *)(.*)')
 header2Regex = re.compile(r'([\w ]+\n)*([\w ]+)\n([=-]+)')
 strongRegex = re.compile(r'\*{2}.+\*{2}')
 emphasisRegex = re.compile(r'[^\*\\]\*[^/]+[^\\]\*[^\*]')
-unorderedListRegex = re.compile(r'( {0,3})(\*)([\w \-\[\]\(\):/\.]+\n?)+')
+unorderedListRegex = re.compile(r'(( {0,3})(\*)([\w \-\[\]\(\):/\.]+\n)+)')#BUG
 strikeRegex = re.compile(r'~{2}.+~{2}')
 linkRegex = re.compile(r'[^!]\[([^\[]+)\]( )*\(([^\)]+)\)')
 imageRegex = re.compile('!\\[([^\\[]+)\\]( )*\\(([^"\'\\)]+[^\\.\'"]+)[\'"\\ ]*([\\w\\s]+)[\'"\\ ]*\\)')
@@ -51,12 +51,19 @@ with codecs.open(mdFileUrl,'r','utf-8') as f:
         raw = raw.replace(match[1:-1], '<em>{}</em>'.format(match[2:-2]))
     for match in strikeRegex.findall(raw):
         raw = raw.replace(match, '<del>{}</del>'.format(match[2:-2]))
-    for spaces, star, text in unorderedListRegex.findall(raw):
+    print(unorderedListRegex.findall(raw))
+    for originalText, spaces, star, text in unorderedListRegex.findall(raw):
         #if(type(text)=="<class 'str'>"):
-        originalText = spaces+star+text
         if(True):
           print(0)
           text=[text]
+
+        #tex=''
+        #for i in text:
+        #  tex=tex+i
+        #originalText = spaces+star+tex
+        #del tex
+
         tex=''
         for i in text:
           tex=tex+"<li>"+i+"</li>"
