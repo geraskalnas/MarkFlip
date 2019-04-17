@@ -18,7 +18,7 @@ htmlEnd = '''</body>
 </html>
 '''
 
-headerRegex = re.compile(r'(#{1,6} *)(.*)')
+headerRegex = re.compile(r'(#{1,6} +)(.*)')
 header2Regex = re.compile(r'([\w ]+\n)*([\w ]+)\n([=-]+)')
 strongRegex = re.compile(r'\*{2}.+\*{2}')
 emphasisRegex = re.compile(r'[^\*\\]\*[^/]+[^\\]\*[^\*]')
